@@ -21,9 +21,9 @@ In progress: none. Blocked: none.
 
 1. Build it: `./gradlew buildPlugin` (Git Bash). Output: `build/distributions/cli-color-hints-0.1.2.zip`.
 2. In IntelliJ IDEA 2025.3 or later, open **Settings → Plugins → ⚙ → Install Plugin from Disk…**, pick the zip, and restart.
-3. Add `docs/ColorCoded.java` to your library under its real package. Set the same FQN in
-   `ColorCodedTargeting.ANNOTATION_FQN`, then rebuild the plugin. **Until then the plugin only reacts to
-   `com.example.shop.ColorCoded`.**
+3. Add `docs/ColorCoded.java` to your library under its real package. Enter its FQN in
+   **Settings → Tools → CLI Color Hints** (one per line; several are allowed). This is a per-user IDE setting
+   (`cliColorHints.xml` in the IDE config dir), not stored in any project. **Default: `com.example.shop.ColorCoded`.**
 4. Annotate the lib's color-string parameters: `void println(@ColorCoded String text)`.
 5. You can turn the swatches off in **Settings → Editor → Inlay Hints → Other → CLI color code swatches**.
 
@@ -55,7 +55,7 @@ In progress: none. Blocked: none.
 
 ## Open items for the user
 
-1. Real `@ColorCoded` package: update `ColorCodedTargeting.ANNOTATION_FQN` and the snippet `docs/ColorCoded.java`.
+1. Real `@ColorCoded` package: set it in Settings → Tools → CLI Color Hints and in the snippet `docs/ColorCoded.java`.
 2. Check the SGR mapping and the Ubuntu RGB values in `ColorCodes.ALL` against the lib and a real terminal.
 3. Does the lib support a literal-`&` escape (`&&`)? Currently `&&6` = literal `&` + code `&6`.
 4. Uppercase codes (`&A`): should they count? Currently no.

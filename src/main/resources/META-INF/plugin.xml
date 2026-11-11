@@ -37,6 +37,11 @@
         <codeInsight.inlayProvider language="kotlin" implementationClass="io.github.kimihrmn.clicolorhints.ColorSwatchInlayProvider"/>
         <editorFactoryListener implementation="io.github.kimihrmn.clicolorhints.PaletteEditorFactoryListener"/>
 
+        <!-- Per-user settings: annotation FQNs -->
+        <applicationConfigurable parentId="tools" displayName="CLI Color Hints"
+                                 id="io.github.kimihrmn.clicolorhints.settings"
+                                 instance="io.github.kimihrmn.clicolorhints.ColorHintsConfigurable"/>
+
         <!-- Hover / Ctrl+Q preview -->
         <platform.backend.documentation.targetProvider order="first"
                 implementation="io.github.kimihrmn.clicolorhints.ColorPreviewDocumentationTargetProvider"/>

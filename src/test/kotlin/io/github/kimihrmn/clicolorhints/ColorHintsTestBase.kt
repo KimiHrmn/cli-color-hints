@@ -10,8 +10,9 @@ abstract class ColorHintsTestBase : LightJavaCodeInsightFixtureTestCase() {
 
     override fun setUp() {
         super.setUp()
-        val pkg = ColorCodedTargeting.ANNOTATION_FQN.substringBeforeLast('.')
-        val name = ColorCodedTargeting.ANNOTATION_FQN.substringAfterLast('.')
+        ColorHintsSettings.getInstance().annotationFqns = listOf(DEFAULT_FQN)
+        val pkg = DEFAULT_FQN.substringBeforeLast('.')
+        val name = DEFAULT_FQN.substringAfterLast('.')
         myFixture.addClass(
             """
             package $pkg;
@@ -33,7 +34,21 @@ abstract class ColorHintsTestBase : LightJavaCodeInsightFixtureTestCase() {
         )
     }
 
-    protected val pkg: String get() = ColorCodedTargeting.ANNOTATION_FQN.substringBeforeLast('.')
+    override fun tearDown() {
+        try {
+            ColorHintsSettings.getInstance().annotationFqns = listOf(DEFAULT_FQN)
+        } catch (e: Throwable) {
+            addSuppressedException(e)
+        } finally {
+            super.tearDown()
+        }
+    }
+
+    protected val pkg: String get() = DEFAULT_FQN.substringBeforeLast('.')
+
+    companion object {
+        const val DEFAULT_FQN: String = ColorHintsSettings.DEFAULT_ANNOTATION_FQN
+    }
 
     /** Java file importing the annotation and Cli. */
     protected fun java(body: String): String = "import $pkg.*;\n$body"

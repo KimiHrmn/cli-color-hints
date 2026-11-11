@@ -81,11 +81,8 @@ sealed interface SourcePart {
  */
 object ColorCodedTargeting {
 
-    /**
-     * FQN of the annotation in your library. PLACEHOLDER: replace with the real package.
-     * See `docs/ColorCoded.java` for the snippet to add to the lib.
-     */
-    const val ANNOTATION_FQN: String = "com.example.shop.ColorCoded"
+    /** Annotation FQNs from the per-user settings (Settings → Tools → CLI Color Hints). */
+    val annotationFqns: List<String> get() = ColorHintsSettings.getInstance().annotationFqns
 
     /** Finds the color-coded string containing [element] (any PSI inside a string literal), or `null`. */
     fun find(element: PsiElement?): ColorCodedString? {
@@ -202,18 +199,22 @@ object ColorCodedTargeting {
     }
 
     fun isAnnotated(owner: PsiModifierListOwner): Boolean {
-        if (owner.hasAnnotation(ANNOTATION_FQN)) return true
+        val fqns = annotationFqns
+        if (fqns.isEmpty()) return false
+        if (fqns.any { owner.hasAnnotation(it) }) return true
         val u = owner.toUElement()
-        return u is UAnnotated && u.findAnnotation(ANNOTATION_FQN) != null
+        return u is UAnnotated && fqns.any { u.findAnnotation(it) != null }
     }
 
     private fun isAnnotatedU(u: UElement): Boolean {
-        if (u is UAnnotated && u.findAnnotation(ANNOTATION_FQN) != null) return true
+        val fqns = annotationFqns
+        if (fqns.isEmpty()) return false
+        if (u is UAnnotated && fqns.any { u.findAnnotation(it) != null }) return true
         val psi = u.javaPsi as? PsiModifierListOwner
-        if (psi != null && psi.hasAnnotation(ANNOTATION_FQN)) return true
+        if (psi != null && fqns.any { psi.hasAnnotation(it) }) return true
         // Kotlin properties: the light field may not carry the annotation, so check the source entries.
         val kt = u.sourcePsi as? KtAnnotated ?: return false
-        return kt.annotationEntries.any { (it.toUElement() as? UAnnotation)?.qualifiedName == ANNOTATION_FQN }
+        return kt.annotationEntries.any { (it.toUElement() as? UAnnotation)?.qualifiedName in fqns }
     }
 
     private fun UExpression?.sameAs(other: UExpression): Boolean {

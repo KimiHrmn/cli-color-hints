@@ -1,6 +1,5 @@
-// Paste into your library. Then set the same FQN in
-// ColorCodedTargeting.ANNOTATION_FQN (src/main/kotlin/io/github/kimihrmn/clicolorhints/ColorCodedTargeting.kt)
-// and rebuild the plugin.
+// Paste into your library. Then add its FQN in the IDE under
+// Settings -> Tools -> CLI Color Hints (per-user setting; no rebuild needed).
 package com.example.shop; // <- REPLACE with the lib's real package
 
 import java.lang.annotation.Documented;
