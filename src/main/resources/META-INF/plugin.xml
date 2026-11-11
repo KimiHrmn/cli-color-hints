@@ -1,0 +1,44 @@
+<idea-plugin>
+    <id>io.github.kimihrmn.clicolorhints</id>
+    <name>CLI Color Hints</name>
+    <vendor url="https://github.com/KimiHrmn">KimiHrmn</vendor>
+    <description><![CDATA[
+    Hints for Minecraft-style console color codes (<code>&amp;0</code>-<code>&amp;f</code>, <code>&amp;r</code>)
+    in strings that reach <code>@ColorCoded</code> parameters or declarations:
+    completion on <code>&amp;</code>, editor coloring, clickable color swatches and a rendered preview on hover.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends>org.jetbrains.kotlin</depends>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <supportsKotlinPluginMode supportsK2="true"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Completion -->
+        <completion.contributor language="JAVA" order="first"
+                                implementationClass="io.github.kimihrmn.clicolorhints.ColorCodeCompletionContributor"/>
+        <completion.contributor language="kotlin" order="first"
+                                implementationClass="io.github.kimihrmn.clicolorhints.ColorCodeCompletionContributor"/>
+        <completion.confidence language="JAVA" order="first"
+                               implementationClass="io.github.kimihrmn.clicolorhints.ColorCodeCompletionConfidence"/>
+        <completion.confidence language="kotlin" order="first"
+                               implementationClass="io.github.kimihrmn.clicolorhints.ColorCodeCompletionConfidence"/>
+        <typedHandler implementation="io.github.kimihrmn.clicolorhints.ColorCodeTypedHandler" order="first"/>
+
+        <!-- Editor coloring -->
+        <annotator language="JAVA" implementationClass="io.github.kimihrmn.clicolorhints.ColorCodeAnnotator"/>
+        <annotator language="kotlin" implementationClass="io.github.kimihrmn.clicolorhints.ColorCodeAnnotator"/>
+
+        <!-- Swatch inlays + caret-scoped palette -->
+        <codeInsight.inlayProvider language="JAVA" implementationClass="io.github.kimihrmn.clicolorhints.ColorSwatchInlayProvider"/>
+        <codeInsight.inlayProvider language="kotlin" implementationClass="io.github.kimihrmn.clicolorhints.ColorSwatchInlayProvider"/>
+        <editorFactoryListener implementation="io.github.kimihrmn.clicolorhints.PaletteEditorFactoryListener"/>
+
+        <!-- Hover / Ctrl+Q preview -->
+        <platform.backend.documentation.targetProvider order="first"
+                implementation="io.github.kimihrmn.clicolorhints.ColorPreviewDocumentationTargetProvider"/>
+    </extensions>
+</idea-plugin>
