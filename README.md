@@ -4,11 +4,10 @@ Helps with Minecraft-style console color codes (`&0`-`&9`, `&a`-`&f`, `&r` → 4
 that reach a `@ColorCoded` parameter or declaration:
 
 - completion popup on `&` (wraps a selection: `&X` + selection + `&r`)
-- text colored in the editor, code tokens dimmed, swatch before each code
-- clickable 17-color palette after the string while the caret is inside it
+- text colored in the editor; the `&X` tokens are hidden and shown while the caret is inside the string
 - hover / Ctrl+Q: rendered terminal preview (`‹name›` for dynamic parts)
 
-Build: `./gradlew test buildPlugin` → `build/distributions/cli-color-hints-0.1.2.zip` (Install Plugin from Disk, IDEA 2025.3+).
+Build: `./gradlew test buildPlugin` → `cli-color-hints-0.1.4.zip` (Install Plugin from Disk, IDEA 2025.3+).
 
 ## Configure the annotation
 
@@ -18,6 +17,9 @@ To point it at your own annotation:
 1. Add the annotation to your library, e.g. by copying [`docs/ColorCoded.java`](docs/ColorCoded.java) and changing
    its `package` line. Any annotation works; the name doesn't have to be `ColorCoded`.
 2. Annotate the color-string parameters or declarations: `void println(@ColorCoded String text)`.
+   Annotation attributes work too: with `@ColorCoded String description();` declared in your own annotation,
+   `@CliCommand(description = "&aHi")` is colored (arrays like `lines = {"&a1", "&c2"}` as well).
+   The snippet in `docs/` already allows `ElementType.METHOD`, which is what attributes need.
 3. In IntelliJ IDEA open **Settings → Tools → CLI Color Hints**.
 4. Enter the annotation's fully qualified name, one per line, e.g. `org.acme.console.ColorCoded`.
    You can list several; a string counts if any of them matches. An empty list turns the plugin off.

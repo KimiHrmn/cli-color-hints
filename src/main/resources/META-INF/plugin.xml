@@ -5,7 +5,7 @@
     <description><![CDATA[
     Hints for Minecraft-style console color codes (<code>&amp;0</code>-<code>&amp;f</code>, <code>&amp;r</code>)
     in strings that reach <code>@ColorCoded</code> parameters or declarations:
-    completion on <code>&amp;</code>, editor coloring, clickable color swatches and a rendered preview on hover.
+    completion on <code>&amp;</code>, editor coloring, hidden codes while not editing and a rendered preview on hover.
     ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
@@ -32,10 +32,10 @@
         <annotator language="JAVA" implementationClass="io.github.kimihrmn.clicolorhints.ColorCodeAnnotator"/>
         <annotator language="kotlin" implementationClass="io.github.kimihrmn.clicolorhints.ColorCodeAnnotator"/>
 
-        <!-- Swatch inlays + caret-scoped palette -->
-        <codeInsight.inlayProvider language="JAVA" implementationClass="io.github.kimihrmn.clicolorhints.ColorSwatchInlayProvider"/>
-        <codeInsight.inlayProvider language="kotlin" implementationClass="io.github.kimihrmn.clicolorhints.ColorSwatchInlayProvider"/>
-        <editorFactoryListener implementation="io.github.kimihrmn.clicolorhints.PaletteEditorFactoryListener"/>
+        <!-- Codes hidden (folded) unless the caret is in the string -->
+        <lang.foldingBuilder language="JAVA" implementationClass="io.github.kimihrmn.clicolorhints.ColorCodeFoldingBuilder"/>
+        <lang.foldingBuilder language="kotlin" implementationClass="io.github.kimihrmn.clicolorhints.ColorCodeFoldingBuilder"/>
+        <editorFactoryListener implementation="io.github.kimihrmn.clicolorhints.FoldingEditorFactoryListener"/>
 
         <!-- Per-user settings: annotation FQNs -->
         <applicationConfigurable parentId="tools" displayName="CLI Color Hints"

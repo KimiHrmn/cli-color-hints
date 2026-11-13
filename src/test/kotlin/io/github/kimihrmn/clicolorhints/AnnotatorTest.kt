@@ -51,19 +51,52 @@ class AnnotatorTest : ColorHintsTestBase() {
         assertEquals(listOf("&a", "OK"), r.map { it.first })
     }
 
-    fun testLowContrastGetsChip() {
-        myFixture.configureByText("Test.java", java("class T { void m() { Cli.print(\"&fWhite&0Black\"); } }"))
-        val s = findAt("White")
-        val onWhite = ColorCodeAnnotator.spans(s, 0xFFFFFF, 0x000000).filterNot { it.dim }
-        assertEquals(ColorMath.DARK_CHIP, onWhite[0].bg) // white text on white editor
-        assertNull(onWhite[1].bg) // black text on white editor
-        val onDark = ColorCodeAnnotator.spans(s, 0x1E1F22, 0xBCBEC4).filterNot { it.dim }
-        assertNull(onDark[0].bg)
-        assertEquals(ColorMath.LIGHT_CHIP, onDark[1].bg)
+    private fun addCommandAnnotation() {
+        myFixture.addClass(
+            """
+            package $pkg;
+            import java.lang.annotation.*;
+            @Retention(RetentionPolicy.RUNTIME)
+            @Target(ElementType.METHOD)
+            public @interface Cmd {
+                String[] value() default "";
+                String usage() default "";
+                @ColorCoded String description() default "";
+                @ColorCoded String[] lines() default {};
+            }
+            """.trimIndent(),
+        )
     }
 
-    private fun findAt(marker: String): ColorCodedString {
-        val offset = myFixture.file.text.indexOf(marker)
-        return ColorCodedTargeting.find(myFixture.file.findElementAt(offset))!!
+    fun testJavaAnnotationAttributeColored() {
+        addCommandAnnotation()
+        val r = coloredRanges("Test.java", java("class T { @Cmd(value = \"&6x\", description = \"&cHi\") void m() {} }"))
+        assertEquals(listOf("&c", "Hi"), r.map { it.first })
+        assertEquals(red, r[1].second)
+    }
+
+    fun testJavaAnnotationAttributeArrayColored() {
+        addCommandAnnotation()
+        val r = coloredRanges("Test.java", java("class T { @Cmd(lines = {\"&6A\", \"&cB\"}) void m() {} }"))
+        assertEquals(listOf("&6", "A", "&c", "B"), r.map { it.first })
+    }
+
+    fun testJavaAnnotationShorthandValueNotColored() {
+        addCommandAnnotation()
+        assertEquals(emptyList<Pair<String, String>>(), coloredRanges("Test.java", java("class T { @Cmd(\"&6x\") void m() {} }")))
+    }
+
+    fun testJavaAnnotationDefaultValueColored() {
+        val r = coloredRanges(
+            "Test.java",
+            java("@interface Own { @ColorCoded String description() default \"&aOK\"; }"),
+        )
+        assertEquals(listOf("&a", "OK"), r.map { it.first })
+    }
+
+    fun testKotlinAnnotationAttributeColored() {
+        addCommandAnnotation()
+        val r = coloredRanges("Test.kt", kotlin("@Cmd(description = \"&cHi\") fun m() {}"))
+        assertEquals(listOf("&c", "Hi"), r.map { it.first })
     }
 }

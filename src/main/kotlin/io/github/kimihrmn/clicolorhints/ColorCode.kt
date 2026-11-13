@@ -5,7 +5,7 @@ package io.github.kimihrmn.clicolorhints
  *
  * @property char the character after `&`
  * @property sgr the 4-bit ANSI SGR parameter the lib emits (`ESC[<sgr>m`)
- * @property rgb preview color as 0xRRGGBB (Ubuntu GNOME Terminal default palette); `null` for reset
+ * @property rgb preview color as 0xRRGGBB (Ubuntu terminal palette, Wikipedia "ANSI escape code" Ubuntu column); `null` for reset
  * @property displayName plain-language name, no Minecraft names
  */
 data class ColorCode(
@@ -38,21 +38,21 @@ object ColorCodes {
     const val TERMINAL_FOREGROUND: Int = 0xFFFFFF
 
     val ALL: List<ColorCode> = listOf(
-        ColorCode('0', 30, 0x171421, "Black"),
-        ColorCode('1', 34, 0x12488B, "Blue (dark)"),
-        ColorCode('2', 32, 0x26A269, "Green (dark)"),
-        ColorCode('3', 36, 0x2AA1B3, "Cyan (dark)"),
-        ColorCode('4', 31, 0xC01C28, "Red (dark)"),
-        ColorCode('5', 35, 0xA347BA, "Magenta (dark)"),
-        ColorCode('6', 33, 0xA2734C, "Yellow (dark)"),
-        ColorCode('7', 37, 0xD0CFCC, "Gray (light)"),
-        ColorCode('8', 90, 0x5E5C64, "Gray (dark)"),
-        ColorCode('9', 94, 0x2A7BDE, "Blue (bright)"),
-        ColorCode('a', 92, 0x33DA7A, "Green (bright)"),
-        ColorCode('b', 96, 0x33C7DE, "Cyan (bright)"),
-        ColorCode('c', 91, 0xF66151, "Red (bright)"),
-        ColorCode('d', 95, 0xC061CB, "Magenta (bright)"),
-        ColorCode('e', 93, 0xE9AD0C, "Yellow (bright)"),
+        ColorCode('0', 30, 0x010101, "Black"),
+        ColorCode('1', 34, 0x006FB8, "Blue (dark)"),
+        ColorCode('2', 32, 0x39B54A, "Green (dark)"),
+        ColorCode('3', 36, 0x2CB5E9, "Cyan (dark)"),
+        ColorCode('4', 31, 0xDE382B, "Red (dark)"),
+        ColorCode('5', 35, 0x762671, "Magenta (dark)"),
+        ColorCode('6', 33, 0xFFC706, "Yellow (dark)"),
+        ColorCode('7', 37, 0xCCCCCC, "Gray (light)"),
+        ColorCode('8', 90, 0x808080, "Gray (dark)"),
+        ColorCode('9', 94, 0x0000FF, "Blue (bright)"),
+        ColorCode('a', 92, 0x00FF00, "Green (bright)"),
+        ColorCode('b', 96, 0x00FFFF, "Cyan (bright)"),
+        ColorCode('c', 91, 0xFF0000, "Red (bright)"),
+        ColorCode('d', 95, 0xFF00FF, "Magenta (bright)"),
+        ColorCode('e', 93, 0xFFFF00, "Yellow (bright)"),
         ColorCode('f', 97, 0xFFFFFF, "White"),
         ColorCode('r', 0, null, "Reset"),
     )
