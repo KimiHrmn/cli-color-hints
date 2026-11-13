@@ -15,6 +15,8 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.ULiteralExpression
 import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.UNamedExpression
+import org.jetbrains.uast.UastCallKind
 import org.jetbrains.uast.UParenthesizedExpression
 import org.jetbrains.uast.UPolyadicExpression
 import org.jetbrains.uast.UQualifiedReferenceExpression
@@ -28,14 +30,9 @@ import org.jetbrains.uast.tryResolve
 
 /** A color-coded string expression found in source. */
 class ColorCodedString(
-    /** Outermost string expression (concatenation / template / literal). */
-    val expression: UExpression,
     /** Literal and dynamic parts, in order. */
     val parts: List<SourcePart>,
 ) {
-    /** Text range of the whole expression in the file. */
-    val range: TextRange? get() = expression.sourcePsi?.textRange
-
     /** Literal parts with their raw source text and absolute offsets: for editor features. */
     fun rawParts(): List<StringPart> = parts.map {
         when (it) {
@@ -78,6 +75,8 @@ sealed interface SourcePart {
  *  - initializer of a `@ColorCoded` field / property / local variable / parameter default
  *  - value assigned to a `@ColorCoded` variable
  *  - returned from a `@ColorCoded` method / function (incl. Kotlin expression bodies)
+ *  - value of an annotation attribute whose declaring method is `@ColorCoded`
+ *    (`@Cmd(description = "...")`, also inside `{...}` arrays)
  */
 object ColorCodedTargeting {
 
@@ -89,7 +88,7 @@ object ColorCodedTargeting {
         val host = PsiTreeUtil.getParentOfType(element, PsiLanguageInjectionHost::class.java, false) ?: return null
         val top = topStringExpression(host) ?: return null
         if (!isColorCodedSite(top)) return null
-        return ColorCodedString(top, flatten(top))
+        return ColorCodedString(flatten(top))
     }
 
     /** Same as [find] but without the annotation check (the string the caret is in). */
@@ -162,7 +161,15 @@ object ColorCodedTargeting {
     fun isColorCodedSite(expr: UExpression): Boolean {
         val parent = expr.uastParent ?: return false
         when (parent) {
-            is UCallExpression -> return isAnnotatedParameterArgument(parent, expr)
+            is UNamedExpression -> return isAnnotatedAttribute(parent)
+            is UCallExpression -> {
+                // `attr = {"a", "b"}`: an array initializer between the string and the attribute
+                if (parent.kind == UastCallKind.NESTED_ARRAY_INITIALIZER) {
+                    val attribute = parent.uastParent as? UNamedExpression ?: return false
+                    return isAnnotatedAttribute(attribute)
+                }
+                return isAnnotatedParameterArgument(parent, expr)
+            }
             is UVariable -> return parent.uastInitializer.sameAs(expr) && isAnnotatedU(parent)
             is UBinaryExpression -> {
                 if (parent.operator == UastBinaryOperator.ASSIGN && parent.rightOperand.sameAs(expr)) {
@@ -184,6 +191,14 @@ object ColorCodedTargeting {
                 return false
             }
         }
+    }
+
+    /** `@Cmd(description = "...")`: is the attribute's declaring method (`String description()`) `@ColorCoded`? */
+    private fun isAnnotatedAttribute(attribute: UNamedExpression): Boolean {
+        val annotation = attribute.uastParent as? UAnnotation ?: return false
+        val attributeClass = annotation.resolve() ?: return false
+        val name = attribute.name ?: "value" // `@Cmd("x")` is shorthand for `value`
+        return attributeClass.findMethodsByName(name, false).any { isAnnotated(it) }
     }
 
     private fun isAnnotatedParameterArgument(call: UCallExpression, arg: UExpression): Boolean {

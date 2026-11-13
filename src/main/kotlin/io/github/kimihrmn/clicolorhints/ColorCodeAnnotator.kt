@@ -11,8 +11,8 @@ import com.intellij.psi.PsiLanguageInjectionHost
 import java.awt.Color
 
 /**
- * Colors text after a code with the code's preview color (plus a contrasting background chip when it would be
- * hard to read on the editor background) and dims the `&X` tokens themselves.
+ * Colors text after a code with the code's preview color (no contrast help: barely readable is fine in code)
+ * and dims the `&X` tokens themselves.
  */
 class ColorCodeAnnotator : Annotator {
 
@@ -33,12 +33,9 @@ class ColorCodeAnnotator : Annotator {
         }
     }
 
-    /** One highlighted range: [fg]/[bg] as 0xRRGGBB, [dim] marks a code token. */
-    data class Span(val range: TextRange, val fg: Int, val bg: Int?, val dim: Boolean) {
-        fun attributes(): TextAttributes = TextAttributes().apply {
-            foregroundColor = Color(fg)
-            if (bg != null) backgroundColor = Color(bg)
-        }
+    /** One highlighted range: [fg] as 0xRRGGBB, [dim] marks a code token. */
+    data class Span(val range: TextRange, val fg: Int, val dim: Boolean) {
+        fun attributes(): TextAttributes = TextAttributes().apply { foregroundColor = Color(fg) }
     }
 
     companion object {
@@ -53,13 +50,13 @@ class ColorCodeAnnotator : Annotator {
                 when (seg) {
                     is Segment.Code -> {
                         val at = seg.offset ?: continue
-                        out += Span(TextRange(at, at + seg.code.token.length), dimFg, null, dim = true)
+                        out += Span(TextRange(at, at + seg.code.token.length), dimFg, dim = true)
                     }
                     is Segment.Text -> {
                         val at = seg.offset ?: continue
                         val rgb = seg.color?.rgb ?: continue
                         if (seg.text.isEmpty()) continue
-                        out += Span(TextRange(at, at + seg.text.length), rgb, ColorMath.chipFor(rgb, editorBg), dim = false)
+                        out += Span(TextRange(at, at + seg.text.length), rgb, dim = false)
                     }
                     is Segment.Placeholder -> Unit
                 }

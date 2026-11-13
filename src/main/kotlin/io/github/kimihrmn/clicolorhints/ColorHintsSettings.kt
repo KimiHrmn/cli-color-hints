@@ -1,7 +1,6 @@
 package io.github.kimihrmn.clicolorhints
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
-import com.intellij.codeInsight.daemon.impl.InlayHintsPassFactoryInternal
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.RoamingType
@@ -49,11 +48,10 @@ class ColorHintsSettings : PersistentStateComponent<ColorHintsSettings.State> {
         fun getInstance(): ColorHintsSettings =
             ApplicationManager.getApplication().getService(ColorHintsSettings::class.java)
 
-        /** Re-run highlighting and inlays in all open projects (after the FQNs changed). */
+        /** Re-run highlighting and folding in all open projects (after the FQNs changed). */
         fun refreshOpenProjects() {
-            InlayHintsPassFactoryInternal.forceHintsUpdateOnNextPass()
             for (project in ProjectManager.getInstance().openProjects) {
-                if (!project.isDisposed) DaemonCodeAnalyzer.getInstance(project).restart("CLI color hints: annotation FQNs changed")
+                if (!project.isDisposed) DaemonCodeAnalyzer.getInstance(project).restart("CLI color hints: settings changed")
             }
         }
     }
@@ -77,7 +75,7 @@ class ColorHintsConfigurable : BoundSearchableConfigurable("CLI Color Hints", "i
                 )
                 .comment(
                     "Strings passed to parameters, or assigned to / returned from declarations, annotated with any of " +
-                        "these get completion, coloring, swatches and the preview. Stored per user, not in the project.",
+                        "these get completion, coloring, hidden codes and the preview. Stored per user, not in the project.",
                 )
         }
     }
