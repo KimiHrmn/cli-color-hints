@@ -7,7 +7,9 @@ that reach a `@ColorCoded` parameter or declaration:
 - text colored in the editor; the `&X` tokens are hidden and shown while the caret is inside the string
 - hover / Ctrl+Q: rendered terminal preview (`‹name›` for dynamic parts)
 
-Build: `./gradlew test buildPlugin` → `cli-color-hints-0.1.4.zip` (Install Plugin from Disk, IDEA 2025.3+).
+Download: the plugin zip is attached to each [GitHub release](https://github.com/KimiHrmn/cli-color-hints/releases)
+(Install Plugin from Disk, IDEA 2025.3+).
+Build it yourself: `./gradlew test buildPlugin` → `build/distributions/cli-color-hints-<version>.zip`.
 
 ## Configure the annotation
 

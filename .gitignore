@@ -6,3 +6,5 @@ build/
 out/
 .kotlin/
 build-log-*.txt
+# Built plugin zips belong in GitHub Releases, not in the repository.
+*.zip
