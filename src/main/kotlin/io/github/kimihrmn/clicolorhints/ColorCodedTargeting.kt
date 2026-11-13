@@ -110,7 +110,6 @@ object ColorCodedTargeting {
     }
 
     private fun isStringConcat(e: UPolyadicExpression): Boolean {
-        if (e is UBinaryExpression && e.operator != UastBinaryOperator.PLUS) return false
         if (e.operator != UastBinaryOperator.PLUS) return false
         val type = e.getExpressionType()?.canonicalText
         if (type == "java.lang.String" || type == "kotlin.String") return true

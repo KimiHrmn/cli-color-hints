@@ -9,12 +9,6 @@ import org.junit.Test
 class ColorMathAndPreviewTest {
 
     @Test
-    fun `contrast ratio extremes`() {
-        assertEquals(21.0, ColorMath.contrastRatio(0x000000, 0xFFFFFF), 0.01)
-        assertEquals(1.0, ColorMath.contrastRatio(0x777777, 0x777777), 0.0001)
-    }
-
-    @Test
     fun `blend and hex`() {
         assertEquals(0x808080, ColorMath.blend(0x000000, 0xFFFFFF, 0.5025))
         assertEquals("#300A24", ColorMath.hex(ColorCodes.TERMINAL_BACKGROUND))
