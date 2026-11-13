@@ -1,13 +1,13 @@
 # Status: cli-color-hints
 
-_Last updated: 2026-11-11._
+_Last updated: 2026-11-13._
 
 ## Done
 
 | # | Step | Where |
 |---|------|-------|
 | 1 | Gradle 9.8.2 wrapper, IntelliJ Platform Gradle Plugin 2.20.1, Kotlin 2.4.21 (api/language 2.2), `intellijIdea("2025.3.6.2")`, `since-build 253`, K2 declared, git | `build.gradle.kts`, `settings.gradle.kts`, `plugin.xml` |
-| 2 | Code table (code → SGR → preview RGB → name), parser (code / text / placeholder segments), contrast math, HTML preview renderer | `ColorCode.kt`, `ColorCodeParser.kt`, `ColorMath.kt`, `PreviewRenderer.kt` |
+| 2 | Code table (code → SGR → preview RGB → name), parser (code / text / placeholder segments), color blending, HTML preview renderer | `ColorCode.kt`, `ColorCodeParser.kt`, `ColorMath.kt`, `PreviewRenderer.kt` |
 | 3 | UAST targeting (Java + Kotlin): argument for a `@ColorCoded` parameter (positional and named); initializer of annotated field / property / local; assignment to an annotated variable; return value of an annotated method, including Kotlin expression bodies. `+` concatenation and Kotlin templates become literal and dynamic parts | `ColorCodedTargeting.kt` |
 | 4 | Completion after `&` (icons, names, ANSI hint, table order, also matches names: `&yel` offers `&6` and `&e`). Auto-popup on `&`. Wraps the selection | `ColorCodeCompletion.kt`, `ColorCodeInsertion.kt` |
 | 5 | Annotator: text after a code is shown in the code's color. The `&X` token itself is dimmed. | `ColorCodeAnnotator.kt` |
@@ -19,7 +19,8 @@ In progress: none. Blocked: none.
 
 ## Install the plugin
 
-1. Build it: `./gradlew buildPlugin` (Git Bash). Output: `../cli-color-hints-0.1.4.zip`.
+1. Download the zip from the [GitHub releases](https://github.com/KimiHrmn/cli-color-hints/releases), or build it:
+   `./gradlew buildPlugin` (Git Bash). Output: `build/distributions/cli-color-hints-<version>.zip`.
 2. In IntelliJ IDEA 2025.3 or later, open **Settings → Plugins → ⚙ → Install Plugin from Disk…**, pick the zip, and restart.
 3. Add `docs/ColorCoded.java` to your library under its real package. Enter its FQN in
    **Settings → Tools → CLI Color Hints** (one per line; several are allowed). This is a per-user IDE setting
